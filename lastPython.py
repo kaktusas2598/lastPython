@@ -10,4 +10,7 @@ for i in range(10):
     topArtists = lastApi.topArtists(page = (i+1))
     # lastDb.addArtists(topArtists)
     for artist in topArtists:
-        lastDb.addTags(lastApi.artistTags(artist['mbid']))
+        topArtistTags = lastApi.artistTags(artist['mbid'])
+        # lastDb.addTags(topArtistTags)
+        print("Saving tags for {artist}...".format(artist = artist['name']))
+        lastDb.addArtistTags(mbid = artist['mbid'], tags = topArtistTags)

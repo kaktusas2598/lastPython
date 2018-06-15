@@ -81,7 +81,20 @@ class LastDb:
                 self.dbConn.commit()
             except sqlite3.Error as e:
                 print ("An error occurred: {error}".format(error= e.args[0]))
-    def addArtistTags(self, tags):
+    def addArtistTags(self, mbid, tags):
+        self.dbCursor.execute("SELECT id FROM artist WHERE mbid=:mbid", {"mbid": mbid})
+        artistId = self.dbCursor.fetchone()[0]
+        try:
+            for tag in tags:
+                self.dbCursor.execute("SELECT id FROM tag WHERE name=:name", {"name": tag['name']})
+                tagId = self.dbCursor.fetchone()
+                if not tagId:
+                    self.addTag(tag);
+                self.dbCursor.execute("INSERT INTO artist_tag (tag_id, artist_id, count)" + \
+                        "VALUES (:tagId, :artistId, :count);",{"tagId": tagId[0], "artistId": artistId,"count": tag["count"] })
+                self.dbConn.commit()
+        except sqlite3.Error as e:
+            print ("An error occurred: {error}".format(error= e.args[0]))
         return None
     def addTag(self, tag):
         try:
