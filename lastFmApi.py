@@ -83,7 +83,7 @@ class LastDb:
                 print ("An error occurred: {error}".format(error= e.args[0]))
     def addArtistTags(self, tags):
         return None
-    def addTagIfNotExists(self, tag):
+    def addTag(self, tag):
         try:
             self.dbCursor.execute("INSERT INTO tag (name) VALUES (:name);",{"name": tag['name']})
             self.dbConn.commit()
@@ -91,4 +91,4 @@ class LastDb:
             print ("An error occurred: {error}".format(error= e.args[0]))
     def addTags(self, tags):
         for tag in tags:
-            self.addTagIfNotExists(tag)
+            self.addTag(tag)
