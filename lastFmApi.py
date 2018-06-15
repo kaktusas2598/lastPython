@@ -1,6 +1,5 @@
 import requests
 import json
-from bs4 import BeautifulSoup
 
 class LastApi:
     apiRoot = "http://ws.audioscrobbler.com/2.0/"

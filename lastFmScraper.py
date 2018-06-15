@@ -1,5 +1,6 @@
 from lastFmApi import LastApi
 import re
+from bs4 import BeautifulSoup
 from user_agent import generate_user_agent
 import sqlite3
 
