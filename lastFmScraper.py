@@ -38,11 +38,11 @@ def fetchTopArtistsWithSoup():
 
 lastApi = LastApi(apiKey = "c9ed7d90823350da12b8eb9fda41c128", sharedSecret = "71b5230c49a48d0b138ad3daa283ce60")
 topArtists= lastApi.topArtists()
-for artist in topArtists['topartists']['artist']:
+for artist in topArtists:
     # print(json.dumps(artist['@attr']))
     print(artist['@attr']['rank'] + ": " + artist['name'] + " (" + artist['playcount'] + ")\n")
     tags = lastApi.artistTags(artist['mbid'])
-    for tag in tags['toptags']['tag']:
+    for tag in tags:
         print(tag['name'] + " ")
     print("\n")
 # dbConn = sqlite3.connect("lastFm.sqlite")
