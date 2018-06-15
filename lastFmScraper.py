@@ -38,7 +38,7 @@ def fetchTopArtistsWithSoup():
             continue
 
 lastApi = LastApi(apiKey = "c9ed7d90823350da12b8eb9fda41c128", sharedSecret = "71b5230c49a48d0b138ad3daa283ce60")
-topArtists= lastApi.topArtists()
+topArtists= lastApi.topArtists(page = 2)
 for artist in topArtists:
     # print(json.dumps(artist['@attr']))
     print(artist['@attr']['rank'] + ": " + artist['name'] + " (" + artist['playcount'] + ")\n")
