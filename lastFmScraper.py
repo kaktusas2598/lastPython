@@ -1,7 +1,5 @@
+from lastFmApi import LastApi
 import re
-import requests
-import json
-from bs4 import BeautifulSoup
 from user_agent import generate_user_agent
 import sqlite3
 
@@ -37,35 +35,13 @@ def fetchTopArtistsWithSoup():
             print("\n")
         except AttributeError as error:
             continue
-class LastApi:
-    apiKey = "c9ed7d90823350da12b8eb9fda41c128"
-    sharedSecret = "71b5230c49a48d0b138ad3daa283ce60"
-    apiRoot = "http://ws.audioscrobbler.com/2.0/"
-    headers = {'Content-Type': 'application/json'}
 
-    def topArtists(self):
-        url = "?method=user.getTopArtists&user=kaktusas86&period=overall&api_key="+self.apiKey+"&format=json"
-        response = requests.get(self.apiRoot+url, headers = self.headers, timeout = 5)
-        if response.status_code == 200:
-            return json.loads(response.content.decode('utf-8'))
-        else:
-            return None
-    def artistTags(self, mbid):
-        url = "?method=artist.getTopTags&mbid="+mbid+"&api_key="+self.apiKey+"&format=json"
-        response = requests.get(self.apiRoot+url, headers = self.headers, timeout = 5)
-        if response.status_code == 200:
-            return json.loads(response.content.decode('utf-8'))
-        else:
-            return None
-
-
-
-lastFmApi = LastApi()
-topArtists= lastFmApi.topArtists()
+lastApi = LastApi()
+topArtists= lastApi.topArtists()
 for artist in topArtists['topartists']['artist']:
     # print(json.dumps(artist['@attr']))
     print(artist['@attr']['rank'] + ": " + artist['name'] + " (" + artist['playcount'] + ")\n")
-    tags = lastFmApi.artistTags(artist['mbid'])
+    tags = lastApi.artistTags(artist['mbid'])
     for tag in tags['toptags']['tag']:
         print(tag['name'] + " ")
     print("\n")
