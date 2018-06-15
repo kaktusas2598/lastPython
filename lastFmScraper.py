@@ -46,6 +46,19 @@ for artist in topArtists:
     for tag in tags:
         print(tag['name'] + " ")
     print("\n")
-# dbConn = sqlite3.connect("lastFm.sqlite")
+
+dbConn = sqlite3.connect("lastFm.sqlite")
+dbC = dbConn.cursor()
+createTableSql = """CREATE TABLE IF NOT EXISTS artist(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    play_count INTEGER,
+    mbid VARCHAR(255),
+    url mbid VARCHAR(255)
+    )"""
+dbC.execute(createTableSql)
+# Committing changes and closing the connection to the database file
+dbConn.commit()
+dbConn.close()
 
 
