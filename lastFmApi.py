@@ -3,11 +3,12 @@ import json
 from bs4 import BeautifulSoup
 
 class LastApi:
-    apiKey = "c9ed7d90823350da12b8eb9fda41c128"
-    sharedSecret = "71b5230c49a48d0b138ad3daa283ce60"
     apiRoot = "http://ws.audioscrobbler.com/2.0/"
     headers = {'Content-Type': 'application/json'}
 
+    def __init__(self, apiKey, sharedSecret):
+        self.apiKey = apiKey
+        self.sharedSecret = sharedSecret
     def topArtists(self):
         url = "?method=user.getTopArtists&user=kaktusas86&period=overall&api_key="+self.apiKey+"&format=json"
         response = requests.get(self.apiRoot+url, headers = self.headers, timeout = 5)
