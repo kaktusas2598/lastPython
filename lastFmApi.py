@@ -1,5 +1,6 @@
 import requests
 import json
+import sqlite3
 
 class LastApi:
     apiRoot = "http://ws.audioscrobbler.com/2.0/"
@@ -13,6 +14,7 @@ class LastApi:
         for key, value in params.items():
             url += "&" + key + "=" + value
         return url + "&api_key=" + self.apiKey + "&format=json"
+    # Get top artists for user
     def topArtists(self, page = None):
         params = {'user': 'kaktusas86', 'period': 'overall'}
         if page is not None:
@@ -24,6 +26,7 @@ class LastApi:
             return json.loads(response.content.decode('utf-8'))['topartists']['artist']
         else:
             return None
+    # Get top tags for artist
     def artistTags(self, mbid):
         url = "?method=artist.getTopTags&mbid="+mbid+"&api_key="+self.apiKey+"&format=json"
         response = requests.get(self.apiRoot+url, headers = self.headers, timeout = 5)
@@ -32,4 +35,38 @@ class LastApi:
             return json.loads(response.content.decode('utf-8'))['toptags']['tag']
         else:
             return None
+
+class LastDb:
+    dbFile = "lastFm.sqlite"
+    def __init__(self):
+        print("Connecting to database..")
+        self.dbConn = sqlite3.connect(self.dbFile)
+        self.dbCursor = self.dbConn.cursor()
+        print("Creating tables..")
+        self.createTables()
+    def __del__(self):
+        self.dbConn.close()
+    def createTables(self):
+        createTableSql = """CREATE TABLE IF NOT EXISTS artist(
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                mbid VARCHAR(255),
+                                name TEXT NOT NULL,
+                                play_count INTEGER NOT NULL,
+                                rank INTEGER NOT NULL,
+                                url VARCHAR(255)
+                            )"""
+        self.dbCursor.execute(createTableSql)
+        self.dbConn.commit()
+    def saveArtists(self, artists):
+        for artist in artists:
+            try:
+                self.dbCursor.execute("INSERT INTO artist (mbid, name, play_count, rank, url)" + \
+                        "VALUES ( :mbid, :name, :count, :rank, :url);",
+                        {"name": artist['name'], "count": artist['playcount'], "mbid": artist['mbid'],
+                            "rank": artist['@attr']['rank'], "url": artist['url']})
+                self.dbConn.commit()
+            except sqlite3.Error as e:
+                print ("An error occurred: {error}".format(error= e.args[0]))
+
+
 
