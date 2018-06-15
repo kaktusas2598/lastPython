@@ -6,6 +6,8 @@ lastApi = LastApi(apiKey = "c9ed7d90823350da12b8eb9fda41c128", sharedSecret = "7
 lastDb = LastDb()
 
 for i in range(10):
-    print("Saving page {page}".format(page = (i+1)))
+    # print("Saving page {page}".format(page = (i+1)))
     topArtists = lastApi.topArtists(page = (i+1))
-    lastDb.saveArtists(topArtists)
+    # lastDb.addArtists(topArtists)
+    for artist in topArtists:
+        lastDb.addTags(lastApi.artistTags(artist['mbid']))

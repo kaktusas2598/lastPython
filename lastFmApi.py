@@ -47,17 +47,31 @@ class LastDb:
     def __del__(self):
         self.dbConn.close()
     def createTables(self):
-        createTableSql = """CREATE TABLE IF NOT EXISTS artist(
+        artistTableSql = """CREATE TABLE IF NOT EXISTS artist(
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 mbid VARCHAR(255),
-                                name TEXT NOT NULL,
+                                name TEXT NOT NULL UNIQUE ,
                                 play_count INTEGER NOT NULL,
                                 rank INTEGER NOT NULL,
                                 url VARCHAR(255)
                             )"""
-        self.dbCursor.execute(createTableSql)
+        self.dbCursor.execute(artistTableSql)
+        tagTableSql = """CREATE TABLE IF NOT EXISTS tag(
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                name TEXT NOT NULL UNIQUE
+                            )"""
+        artistTagTableSql = """CREATE TABLE IF NOT EXISTS artist_tag(
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                tag_id INTEGER,
+                                artist_id INTEGER,
+                                count INTEGER,
+                                FOREIGN KEY(tag_id) REFERENCES tag(id),
+                                FOREIGN KEY(artist_id) REFERENCES artist(id)
+                            )"""
+
+        self.dbCursor.execute(artistTagTableSql)
         self.dbConn.commit()
-    def saveArtists(self, artists):
+    def addArtists(self, artists):
         for artist in artists:
             try:
                 self.dbCursor.execute("INSERT INTO artist (mbid, name, play_count, rank, url)" + \
@@ -67,6 +81,14 @@ class LastDb:
                 self.dbConn.commit()
             except sqlite3.Error as e:
                 print ("An error occurred: {error}".format(error= e.args[0]))
-
-
-
+    def addArtistTags(self, tags):
+        return None
+    def addTagIfNotExists(self, tag):
+        try:
+            self.dbCursor.execute("INSERT INTO tag (name) VALUES (:name);",{"name": tag['name']})
+            self.dbConn.commit()
+        except sqlite3.Error as e:
+            print ("An error occurred: {error}".format(error= e.args[0]))
+    def addTags(self, tags):
+        for tag in tags:
+            self.addTagIfNotExists(tag)
