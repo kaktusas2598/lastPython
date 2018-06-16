@@ -8,7 +8,10 @@ class LastRequest:
     headers = {'Content-Type': 'application/json'}
 
     def __init__(self, apiKey):
-        self.apiKey = apiKey
+        with open('keys.json') as f:
+            keys = json.load(f)
+        self.apiKey = keys['apiKey']
+        self.sharedSecret = keys['sharedSecret']
     def buildUrl(self, method, params = []):
         url = self.apiRoot + "?method=" + method
         for key, value in params.items():
@@ -24,10 +27,8 @@ class LastRequest:
             return response.status_code
 
 class LastApi:
-    def __init__(self, apiKey, sharedSecret):
-        self.apiKey = apiKey
-        self.sharedSecret = sharedSecret
-        self.req = LastRequest(apiKey)
+    def __init__(self, keyFile):
+        self.req = LastRequest(keyFile)
     def topArtists(self, page = None):
         params = {'user': 'kaktusas86', 'period': 'overall', 'page' : page}
         return self.req.execute("user.getTopArtists", params)['topartists']['artist']
@@ -149,12 +150,12 @@ class Tag:
         self.name = name;
 
 class Artist:
-    def __init__(self, name , rank, playCount, url, mbid = None, tags = None):
+    def __init__(self, name , rank, playCount, url, mbid = None, tags = {}):
         self.name = name
         self.rank = rank
         self.playCount = playCount
         self.url = url
-        if mbid:
-            self.mbid = mbid
-        if tags:
-            self.tags = tags
+        self.mbid = mbid
+        self.tags = tags
+    def addTags(self, tags):
+        self.tags.update(tags)

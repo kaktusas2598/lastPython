@@ -2,13 +2,14 @@ from lastFmApi import LastApi
 from lastFmApi import LastDb
 import lastFmScraper
 
-lastApi = LastApi(apiKey = "c9ed7d90823350da12b8eb9fda41c128", sharedSecret = "71b5230c49a48d0b138ad3daa283ce60")
+lastApi = LastApi('keys.json')
 lastDb = LastDb()
 
 # Ideas:
 # Use weekly artist or album, track charts to see trending tags
 # and lookup lesser known recommendations (artist.getSimmilar)
 
+# Tag summary:
 # SELECT COUNT(a.name) as 'totalArtistCount', t.name, AVG(a.play_count) as 'avgScrobbles'
 # FROM artist as a
 # LEFT JOIN artist_tag as a_t ON a_t.artist_id = a.id
