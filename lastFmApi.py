@@ -137,6 +137,12 @@ class LastDb:
     def addTags(self, tags):
         for tag in tags:
             self.addTag(tag)
+    def getArtistId(name):
+        try:
+            self.dbCursor.execute("SELECT id FROM artist WHERE name=:name", {"name": name})
+            return self.dbCursor.fetchone()
+        except sqlite3.Error as e:
+            print ("Error while getting artist ID: {error}".format(error= e.args[0]))
 
 class Tag:
     def __init__(self, name):

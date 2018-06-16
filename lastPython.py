@@ -24,8 +24,8 @@ def AddArtistsToDb(pages):
         lastDb.addArtists(topArtists)
 def SyncArtist(artist):
     playCount = lastApi.artistInfo(name = artist)['stats']['userplaycount']
-    # lastDb.getArtistId(name = artist)
-    # lastDb.updateArtist(artistId, );
+    lastDb.getArtistId(name = artist)
+    # lastDb.updateArtist(artistId, playCount = playCount);
 
 print(lastApi.artistInfo(name = "Led Zeppelin")['stats'])
 for i in range(10):
