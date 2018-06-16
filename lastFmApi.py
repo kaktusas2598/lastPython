@@ -33,7 +33,7 @@ class LastApi:
         params = {'user': 'kaktusas86', 'period': 'overall', 'page' : page}
         return self.req.execute("user.getTopArtists", params)['topartists']['artist']
     # Get top albums for user
-    def topArtists(self, page = None):
+    def topAlbums(self, page = None):
         params = {'user': 'kaktusas86', 'period': 'overall', 'page' : page}
         return self.req.execute("user.getTopAlbums", params)['topalbums']['album']
     # Get top tags for artist
