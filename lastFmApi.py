@@ -29,31 +29,42 @@ class LastRequest:
 class LastApi:
     def __init__(self, keyFile):
         self.req = LastRequest(keyFile)
+    # Get top artists for user
     def topArtists(self, page = None):
-        params = {'user': 'kaktusas86', 'period': 'overall', 'page' : page}
-        return self.req.execute("user.getTopArtists", params)['topartists']['artist']
+        return self.req.execute("user.getTopArtists",
+                params = {'user': 'kaktusas86', 'period': 'overall', 'page' : page})['topartists']['artist']
     # Get top albums for user
     def topAlbums(self, page = None):
-        params = {'user': 'kaktusas86', 'period': 'overall', 'page' : page}
-        return self.req.execute("user.getTopAlbums", params)['topalbums']['album']
+        return self.req.execute("user.getTopAlbums",
+                params = {'user': 'kaktusas86', 'period': 'overall', 'page' : page})['topalbums']['album']
     # Get top tags for artist
     def artistTags(self, name = None, mbid = None):
         if name:
             name = quote(name,  safe='')
-        params = {'mdib': mbid, 'artist': name}
         try:
-            return self.req.execute("artist.getTopTags", params)['toptags']['tag']
+            return self.req.execute("artist.getTopTags",
+                    params = {'mdib': mbid, 'artist': name})['toptags']['tag']
         except KeyError as error:
             print(error)
     # Get artist info with user count if possible
     def artistInfo(self, name = None, mbid = None):
         if name:
             name = quote(name,  safe='')
-        params = {'user': 'kaktusas86', 'mdib': mbid, 'artist': name}
         try:
-            return self.req.execute("artist.getInfo", params)['artist']
+            return self.req.execute("artist.getInfo",
+                    params = {'user': 'kaktusas86', 'mdib': mbid, 'artist': name})['artist']
         except KeyError as error:
             print(error)
+    # Get similar artists to artist
+    def getSimilar(self, name = None, mbid = None):
+        if name:
+            name = quote(name,  safe='')
+        try:
+            return self.req.execute("artist.getSimilar",
+                    params = {'user': 'kaktusas86', 'mdib': mbid, 'artist': name})['artist']
+        except KeyError as error:
+            print(error)
+
 
 class LastDb:
     dbFile = "lastFm.sqlite"
