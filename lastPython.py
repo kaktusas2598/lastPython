@@ -5,12 +5,37 @@ import lastFmScraper
 lastApi = LastApi(apiKey = "c9ed7d90823350da12b8eb9fda41c128", sharedSecret = "71b5230c49a48d0b138ad3daa283ce60")
 lastDb = LastDb()
 
+# Ideas:
+# Use weekly artist or album, track charts to see trending tags
+# and lookup lesser known recommendations (artist.getSimmilar)
+
+# SELECT COUNT(a.name) as 'totalArtistCount', t.name, AVG(a.play_count) as 'avgScrobbles'
+# FROM artist as a
+# LEFT JOIN artist_tag as a_t ON a_t.artist_id = a.id
+# LEFT JOIN tag as t ON t.id = a_t.tag_id
+# WHERE a_t.count > 20
+# GROUP BY t.name
+# ORDER BY COUNT(a.name) DESC
+
+def AddArtistsToDb(pages):
+    for i in range(pages):
+        print("Saving page {page}".format(page = (i+1)))
+        topArtists = lastApi.topArtists(page = (i+1))
+        lastDb.addArtists(topArtists)
+def SyncArtist(artist):
+    playCount = lastApi.artistInfo(name = artist)['stats']['userplaycount']
+    # lastDb.getArtistId(name = artist)
+    # lastDb.updateArtist(artistId, );
+
+print(lastApi.artistInfo(name = "Led Zeppelin")['stats'])
 for i in range(10):
-    # print("Saving page {page}".format(page = (i+1)))
-    topArtists = lastApi.topArtists(page = (i+1))
-    # lastDb.addArtists(topArtists)
-    for artist in topArtists:
-        topArtistTags = lastApi.artistTags(artist['mbid'])
-        # lastDb.addTags(topArtistTags)
-        print("Saving tags for {artist}...".format(artist = artist['name']))
-        lastDb.addArtistTags(mbid = artist['mbid'], tags = topArtistTags)
+    for artist in lastDb.getArtists():
+        print("Saving tags for {artist}...".format(artist = artist[2]))
+        if artist[1]:
+            topArtistTags = lastApi.artistTags(artist[2], mbid = artist[1])
+            lastDb.addTags(topArtistTags)
+            lastDb.addArtistTags(mbid = artist[1], tags = topArtistTags)
+        else:
+            topArtistTags = lastApi.artistTags(artist[2])
+            lastDb.addArtistTags(artistId = artist[0], tags = topArtistTags)
+
