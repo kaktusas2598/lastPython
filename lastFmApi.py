@@ -160,7 +160,8 @@ class LastDb:
         except sqlite3.Error as e:
             print ("Error while getting artist ID: {error}".format(error= e.args[0]))
     def getTagSummary(self):
-        self.dbCursor.execute("SELECT COUNT(a.name) as 'totalArtistCount', t.name, AVG(a.play_count) as 'avgScrobbles' "+\
+        self.dbCursor.execute("SELECT COUNT(a.name) as 'totalArtistCount', " +\
+                "t.name, AVG(a.play_count) as 'avgScrobbles', SUM(a.play_count) as 'totalPlays ' "+\
                 "FROM artist as a " +\
                 "LEFT JOIN artist_tag as a_t ON a_t.artist_id = a.id " +\
                 "LEFT JOIN tag as t ON t.id = a_t.tag_id " +\
