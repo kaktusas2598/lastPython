@@ -165,7 +165,8 @@ class LastDb:
                 "FROM artist as a " +\
                 "LEFT JOIN artist_tag as a_t ON a_t.artist_id = a.id " +\
                 "LEFT JOIN tag as t ON t.id = a_t.tag_id " +\
-                "WHERE a_t.count > 20 " +\
+                "WHERE a_t.count > 20 and t.name != 'rock'" +\
+                # and t.name LIKE '%rock%'
                 "GROUP BY t.name " +\
                 "ORDER BY COUNT(a.name) DESC")
         return self.dbCursor.fetchall()

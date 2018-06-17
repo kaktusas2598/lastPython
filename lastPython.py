@@ -9,6 +9,8 @@ lastDb = LastDb()
 # Ideas:
 # Use weekly artist or album, track charts to see trending tags
 # and lookup lesser known recommendations (artist.getSimmilar)
+# TODO:
+#  Filter out uneccessary tags in api: %seen%
 
 def AddArtistsToDb(pages):
     for i in range(pages):
@@ -33,10 +35,10 @@ def SyncArtist(artist):
 
 with plot.xkcd():
     tagSummary = lastDb.getTagSummary()
-    plot.xlabel("Number of artists (From Top 500)")
-    plot.ylabel("Total plays")
+    plot.ylabel("Number of artists (From Top 500)")
+    plot.xlabel("Total plays")
     plot.title("Genre summary (2009-2018)")
     for idx, tag in enumerate(tagSummary):
-        plot.scatter(tag[0], tag[3])
-        plot.annotate(tag[1], [tag[0], tag[3]], [tag[0]+2, tag[3]+1])
+        plot.scatter(tag[3], tag[0])
+        plot.annotate(tag[1], [tag[3], tag[0]], [tag[3]+2, tag[0]+1])
 plot.show()
