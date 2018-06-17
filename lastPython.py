@@ -1,6 +1,7 @@
 from lastFmApi import LastApi
 from lastFmApi import LastDb
 import lastFmScraper
+import matplotlib.pyplot as plot
 
 lastApi = LastApi('keys.json')
 lastDb = LastDb()
@@ -30,4 +31,12 @@ def SyncArtist(artist):
     lastDb.getArtistId(name = artist)
     # lastDb.updateArtist(artistId, playCount = playCount);
 
-print(lastDb.getTagSummary())
+with plot.xkcd():
+    tagSummary = lastDb.getTagSummary()
+    plot.xlabel("Number of artists (From Top 500)")
+    plot.ylabel("Total plays")
+    plot.title("Genre summary (2009-2018)")
+    for idx, tag in enumerate(tagSummary):
+        plot.scatter(tag[0], tag[3])
+        plot.annotate(tag[1], [tag[0], tag[3]], [tag[0]+2, tag[3]+1])
+plot.show()
