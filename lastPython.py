@@ -9,15 +9,6 @@ lastDb = LastDb()
 # Use weekly artist or album, track charts to see trending tags
 # and lookup lesser known recommendations (artist.getSimmilar)
 
-# Tag summary:
-# SELECT COUNT(a.name) as 'totalArtistCount', t.name, AVG(a.play_count) as 'avgScrobbles'
-# FROM artist as a
-# LEFT JOIN artist_tag as a_t ON a_t.artist_id = a.id
-# LEFT JOIN tag as t ON t.id = a_t.tag_id
-# WHERE a_t.count > 20
-# GROUP BY t.name
-# ORDER BY COUNT(a.name) DESC
-
 def AddArtistsToDb(pages):
     for i in range(pages):
         print("Saving page {page}".format(page = (i+1)))
@@ -39,4 +30,4 @@ def SyncArtist(artist):
     lastDb.getArtistId(name = artist)
     # lastDb.updateArtist(artistId, playCount = playCount);
 
-print(lastApi.artistInfo(name = "Led Zeppelin")['stats'])
+print(lastDb.getTagSummary())

@@ -32,11 +32,13 @@ class LastApi:
     # Get top artists for user
     def topArtists(self, page = None):
         return self.req.execute("user.getTopArtists",
-                params = {'user': 'kaktusas86', 'period': 'overall', 'page' : page})['topartists']['artist']
+                params = {'user': 'kaktusas86', 'period': 'overall', 'page' : page}
+                )['topartists']['artist']
     # Get top albums for user
     def topAlbums(self, page = None):
         return self.req.execute("user.getTopAlbums",
-                params = {'user': 'kaktusas86', 'period': 'overall', 'page' : page})['topalbums']['album']
+                params = {'user': 'kaktusas86', 'period': 'overall', 'page' : page}
+                )['topalbums']['album']
     # Get top tags for artist
     def artistTags(self, name = None, mbid = None):
         if name:
@@ -52,7 +54,8 @@ class LastApi:
             name = quote(name,  safe='')
         try:
             return self.req.execute("artist.getInfo",
-                    params = {'user': 'kaktusas86', 'mdib': mbid, 'artist': name})['artist']
+                    params = {'user': 'kaktusas86', 'mdib': mbid, 'artist': name}
+                    )['artist']
         except KeyError as error:
             print(error)
     # Get similar artists to artist
@@ -61,7 +64,8 @@ class LastApi:
             name = quote(name,  safe='')
         try:
             return self.req.execute("artist.getSimilar",
-                    params = {'user': 'kaktusas86', 'mdib': mbid, 'artist': name})['artist']
+                    params = {'user': 'kaktusas86', 'mdib': mbid, 'artist': name}
+                    )['similarartists']['artist']
         except KeyError as error:
             print(error)
 
@@ -155,6 +159,16 @@ class LastDb:
             return self.dbCursor.fetchone()
         except sqlite3.Error as e:
             print ("Error while getting artist ID: {error}".format(error= e.args[0]))
+    def getTagSummary(self):
+        self.dbCursor.execute("SELECT COUNT(a.name) as 'totalArtistCount', t.name, AVG(a.play_count) as 'avgScrobbles' "+\
+                "FROM artist as a " +\
+                "LEFT JOIN artist_tag as a_t ON a_t.artist_id = a.id " +\
+                "LEFT JOIN tag as t ON t.id = a_t.tag_id " +\
+                "WHERE a_t.count > 20 " +\
+                "GROUP BY t.name " +\
+                "ORDER BY COUNT(a.name) DESC")
+        return self.dbCursor.fetchall()
+
 
 class Tag:
     def __init__(self, name):
