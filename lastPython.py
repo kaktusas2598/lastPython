@@ -17,8 +17,8 @@ def AddArtistsToDb(pages):
         print("Saving page {page}".format(page = (i+1)))
         topArtists = lastApi.topArtists(page = (i+1))
         lastDb.addArtists(topArtists)
-def AddArtistTagsToDb():
-    for i in range(10):
+def AddArtistTagsToDb(pages):
+    for i in range(pages):
         for artist in lastDb.getArtists():
             print("Saving tags for {artist}...".format(artist = artist[2]))
             if artist[1]:
