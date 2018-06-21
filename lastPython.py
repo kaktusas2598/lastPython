@@ -1,5 +1,5 @@
 from lastFmApi import LastApi
-from lastFmApi import LastDb
+from lastDb import LastDb
 import lastFmScraper
 import matplotlib.pyplot as plot
 
