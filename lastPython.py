@@ -3,7 +3,7 @@ from lastDb import LastDb
 import lastFmScraper
 import matplotlib.pyplot as plot
 
-lastApi = LastApi('keys.json')
+lastApi = LastApi()
 lastDb = LastDb()
 
 # Ideas:
