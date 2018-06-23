@@ -5,6 +5,7 @@ from hashlib import md5
 import time
 import json
 import webbrowser
+import os.path
 
 class LastRequest:
     apiRoot = "http://ws.audioscrobbler.com/2.0/"
@@ -15,9 +16,10 @@ class LastRequest:
         with open('keys.json') as f:
             keys = json.load(f)
         # TODO: check if file exists
-        with open('session.json') as f:
-            session = json.load(f)
-        self.sessionKey = session['key']
+        if os.path.exists('session.json'):
+            with open('session.json') as f:
+                session = json.load(f)
+            self.sessionKey = session['key']
         self.apiKey = keys['apiKey']
         self.sharedSecret = keys['sharedSecret']
 
@@ -56,6 +58,8 @@ class LastRequest:
             params['api_sig'] = self.signRequest(methodName, params)
 
             self.sessionKey = self.execute(methodName, params = params)['session']['key']
+            with open('session.json', 'w') as fp:
+                json.dump({'key': self.sessionKey}, fp)
         return self.sessionKey
 
     def execute(self, method, params, auth = None, post = None):
