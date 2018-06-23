@@ -33,6 +33,11 @@ def SyncArtist(artist):
     lastDb.getArtistId(name = artist)
     # lastDb.updateArtist(artistId, playCount = playCount);
 
+while True:
+    artist = input("Artist: ")
+    track = input("Track: ")
+    lastApi.scrobbleTrack(artist, track)
+
 with plot.xkcd():
     tagSummary = lastDb.getTagSummary()
     plot.ylabel("Number of artists (From Top 500)")
