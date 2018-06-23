@@ -35,9 +35,9 @@ class LastRequest:
         params['method'] = method;
         params['api_key'] = self.apiKey;
         sortedParams = sorted(params.keys(), key=lambda x:x.lower())
-        uncoded = ''
+        unencoded = ''
         for i in sortedParams:
-            uncoded += i + params[i]
+            unencoded += i + params[i]
         unencoded += self.sharedSecret
         return md5(unencoded.encode('utf-8')).hexdigest()
 
