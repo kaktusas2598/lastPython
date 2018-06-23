@@ -33,10 +33,27 @@ def SyncArtist(artist):
     lastDb.getArtistId(name = artist)
     # lastDb.updateArtist(artistId, playCount = playCount);
 
+print("Welcome to lastPython!")
+print("Choose what you would like to do:")
+print("1. Update now playing")
+print("2. Scrobble a track")
+print("3. Scrobble an album (NOT Implemented)")
 while True:
-    artist = input("Artist: ")
-    track = input("Track: ")
-    lastApi.scrobbleTrack(artist, track)
+    choise = input("# ")
+    if choise == '1':
+        artist = input("Artist: ")
+        track = input("Track: ")
+        lastApi.updateNowPlaying(artist, track)
+    elif choise == '2':
+        artist = input("Artist: ")
+        track = input("Track: ")
+        lastApi.scrobbleTrack(artist, track)
+    elif choise == '3':
+        artist = input("Artist: ")
+        album = input("Album: ")
+        # lastApi.scrobbleAlbum(artist, album)
+    else:
+        print("Not a valid choise!")
 
 with plot.xkcd():
     tagSummary = lastDb.getTagSummary()

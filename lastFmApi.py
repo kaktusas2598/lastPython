@@ -135,6 +135,13 @@ class LastApi:
         return self.req.execute("track.scrobble",
                 params = {'artist': artist, 'track': track, 'timestamp': str(int(time.time()))}, auth = True, post = True)
 
+    # Notify last fm of what user is playing now
+    def updateNowPlaying(self, artist, track, album = None, trackNumber = None,
+            albumArtist = None, duration = None):
+        return self.req.execute("track.updateNowPlaying",
+                params = {'artist': artist, 'track': track}, auth = True, post = True)
+
+
 ################################################################################
 
 class Tag:
