@@ -117,6 +117,15 @@ class LastApi:
         except KeyError as error:
             print(error)
 
+    # Get album info with tracks in it and user play count if possible
+    def albumInfo(self, artist, album):
+        try:
+            return self.req.execute("album.getInfo",
+                    params = {'user': 'kaktusas86', 'artist': artist, 'album': album}
+                    )['album']
+        except KeyError as error:
+            print(error)
+
     # Get similar artists to artist
     def getSimilar(self, name = None, mbid = None):
         if name:
@@ -127,7 +136,6 @@ class LastApi:
                     )['similarartists']['artist']
         except KeyError as error:
             print(error)
-
 
     # Scrobble a track
     def scrobbleTrack(self, artist, track, album = None, trackNumber = None,
