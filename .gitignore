@@ -1,1 +1,12 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Session key file for lastfm
 session.json
+
+# Ignore default SQLite database.
+*.sqlite3
+*.sqlite3-journal
+*.sqlite-journal
