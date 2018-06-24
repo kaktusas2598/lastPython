@@ -62,8 +62,16 @@ class LastApi:
     # Scrobble a track
     def scrobbleTrack(self, artist, track, album = None, trackNumber = None,
             albumArtist = None, duration = None):
-        return self.req.execute("track.scrobble",
-                params = {'artist': artist, 'track': track, 'timestamp': str(int(time.time()))}, auth = True, post = True)
+        timestamp = str(int(time.time()))
+        params = {}
+        if type(track) is set:
+            for i, t in enumerate(track):
+                params['artist['+str(i)+']'] = artist
+                params['track['+str(i)+']'] = t
+                params['timestamp['+str(i)+']'] = timestamp
+        else:
+            params = {'artist': artist, 'track': track, 'timestamp': timestamp}
+        return self.req.execute("track.scrobble", params = params, auth = True, post = True)
 
     # Notify last fm of what user is playing now
     def updateNowPlaying(self, artist, track, album = None, trackNumber = None,
