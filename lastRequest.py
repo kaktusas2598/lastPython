@@ -5,6 +5,7 @@ from hashlib import md5
 import webbrowser
 import os.path
 import json
+import re
 
 class LastRequest:
     apiRoot = "http://ws.audioscrobbler.com/2.0/"
@@ -31,17 +32,20 @@ class LastRequest:
                 url += "&" + key + "=" + str(value)
         return url + "&api_key=" + self.apiKey + "&format=json"
 
-    # !!!! Construct your api method signatures by first ordering all the parameters
-    # sent in your call ALPHABETICALLY by parameter name and concatenating them into
-    # one string using a <name><value> scheme.
+    # Construct method signature by ordering params in ASCII order, appending secret and md5
     def signRequest(self, method, params):
         params['method'] = method;
         params['api_key'] = self.apiKey;
-        sortedParams = sorted(params.keys(), key=lambda x:x.lower())
+
+        convert = lambda text: int(text) if text.isdigit() else text
+        ascii_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
+        sortedParams = sorted(params.keys(), key=ascii_key )
+
         unencoded = ''
         for i in sortedParams:
             unencoded += i + params[i]
         unencoded += self.sharedSecret
+
         return md5(unencoded.encode('utf-8')).hexdigest()
 
     def getSessionKey(self):
