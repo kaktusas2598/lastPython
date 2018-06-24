@@ -37,7 +37,7 @@ print("Welcome to lastPython!")
 print("Choose what you would like to do:")
 print("1. Update now playing")
 print("2. Scrobble a track")
-print("3. Scrobble an album (NOT Implemented)")
+print("3. Scrobble an album")
 while True:
     choise = input("# ")
     if choise == '1':
@@ -51,7 +51,7 @@ while True:
     elif choise == '3':
         artist = input("Artist: ")
         album = input("Album: ")
-        # lastApi.scrobbleAlbum(artist, album)
+        lastApi.scrobbleAlbum(artist, album)
     else:
         print("Not a valid choise!")
 

@@ -59,12 +59,12 @@ class LastApi:
         except KeyError as error:
             print(error)
 
-    # Scrobble a track
+    # Scrobble a track or multiple tracks from same artist
     def scrobbleTrack(self, artist, track, album = None, trackNumber = None,
             albumArtist = None, duration = None):
         timestamp = str(int(time.time()))
         params = {}
-        if type(track) is set:
+        if type(track) is set or type(track) is list:
             for i, t in enumerate(track):
                 params['artist['+str(i)+']'] = artist
                 params['track['+str(i)+']'] = t
@@ -72,6 +72,15 @@ class LastApi:
         else:
             params = {'artist': artist, 'track': track, 'timestamp': timestamp}
         return self.req.execute("track.scrobble", params = params, auth = True, post = True)
+
+    # Scrobble whole album
+    # TODO: Implement scrobbling specific side for records
+    def scrobbleAlbum(self, artist, album, side = None):
+        tracks = self.albumInfo(artist,album)['tracks']
+        trackList = []
+        for track in tracks['track']:
+            trackList.append(track['name'])
+        return self.scrobbleTrack(artist, trackList)
 
     # Notify last fm of what user is playing now
     def updateNowPlaying(self, artist, track, album = None, trackNumber = None,
