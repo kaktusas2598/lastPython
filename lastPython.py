@@ -1,6 +1,8 @@
 from lastFmApi import LastApi
 from lastDb import LastDb
 import lastFmScraper
+import argparse
+import sys
 import matplotlib.pyplot as plot
 
 lastApi = LastApi()
@@ -11,6 +13,29 @@ lastDb = LastDb()
 # and lookup lesser known recommendations (artist.getSimmilar)
 # TODO:
 #  Filter out uneccessary tags in api: %seen%
+class LastPython:
+
+    def __init__(self):
+        self.parser = argparse.ArgumentParser()
+        self.subparsers = self.parser.add_subparsers()
+
+        self.scrobbleParser = self.subparsers.add_parser('scrobble')
+        self.scrobbleParser.add_argument("-a", "--artist", required=True,
+                help="Name of the artist to scrobble")
+        self.scrobbleParser.add_argument("-al", "--album", required=False,
+                help="Name of the album to scrobble")
+        self.scrobbleParser.add_argument("-t", "--track", required=True,
+                help="Name of the track to scrobble")
+        self.scrobbleParser.set_defaults(func=self.scrobble)
+        args = self.parser.parse_args()
+
+        args.func(args)
+
+    def scrobble(self, args):
+        lastApi.scrobbleTrack(args.artist, args.track)
+
+    def nowPlaying(self, args):
+        lastApi.updateNowPlaying(args.artist, args.track)
 
 def AddArtistsToDb(pages):
     for i in range(pages):
@@ -32,6 +57,8 @@ def SyncArtist(artist):
     playCount = lastApi.artistInfo(name = artist)['stats']['userplaycount']
     lastDb.getArtistId(name = artist)
     # lastDb.updateArtist(artistId, playCount = playCount);
+
+last = LastPython()
 
 print("Welcome to lastPython!")
 print("Choose what you would like to do:")
