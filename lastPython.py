@@ -20,11 +20,11 @@ class LastPython:
         self.subparsers = self.parser.add_subparsers()
 
         self.scrobbleParser = self.subparsers.add_parser('scrobble')
-        self.scrobbleParser.add_argument("-a", "--artist", required=True,
+        self.scrobbleParser.add_argument("-a", "--artist", required=True, nargs='+',
                 help="Name of the artist to scrobble")
         self.scrobbleParser.add_argument("-al", "--album", required=False,
                 help="Name of the album to scrobble")
-        self.scrobbleParser.add_argument("-t", "--track", required=True,
+        self.scrobbleParser.add_argument("-t", "--track", required=True, nargs='+',
                 help="Name of the track to scrobble")
         self.scrobbleParser.set_defaults(func=self.scrobble)
         args = self.parser.parse_args()
@@ -32,10 +32,10 @@ class LastPython:
         args.func(args)
 
     def scrobble(self, args):
-        lastApi.scrobbleTrack(args.artist, args.track)
+        lastApi.scrobbleTrack(' '.join(args.artist), ' '.join(args.track))
 
     def nowPlaying(self, args):
-        lastApi.updateNowPlaying(args.artist, args.track)
+        lastApi.updateNowPlaying(' '.join(args.artist), ' '.join(args.track))
 
 def AddArtistsToDb(pages):
     for i in range(pages):
