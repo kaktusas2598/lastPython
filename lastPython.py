@@ -29,7 +29,10 @@ class LastPython:
         self.scrobbleParser.set_defaults(func=self.scrobble)
         args = self.parser.parse_args()
 
-        args.func(args)
+        try:
+            args.func(args)
+        except AttributeError:
+            print('No arguments provided.')
 
     def scrobble(self, args):
         lastApi.scrobbleTrack(' '.join(args.artist), ' '.join(args.track))
@@ -57,14 +60,25 @@ def SyncArtist(artist):
     playCount = lastApi.artistInfo(name = artist)['stats']['userplaycount']
     lastDb.getArtistId(name = artist)
     # lastDb.updateArtist(artistId, playCount = playCount);
+def ShowTagSummary():
+    with plot.xkcd():
+        tagSummary = lastDb.getTagSummary()
+        plot.ylabel("Number of artists (From Top 500)")
+        plot.xlabel("Total plays")
+        plot.title("Genre summary (2009-Now)")
+        for idx, tag in enumerate(tagSummary):
+            plot.scatter(tag[3], tag[0])
+            plot.annotate(tag[1], [tag[3], tag[0]], [tag[3]+2, tag[0]+1])
+    plot.show()
 
 last = LastPython()
 
 print("Welcome to lastPython!")
-print("Choose what you would like to do:")
+print("Choose what you would like to do (press q to quit):")
 print("1. Update now playing")
 print("2. Scrobble a track")
 print("3. Scrobble an album")
+print("4. Display tag summary chart")
 while True:
     choise = input("# ")
     if choise == '1':
@@ -79,15 +93,10 @@ while True:
         artist = input("Artist: ")
         album = input("Album: ")
         lastApi.scrobbleAlbum(artist, album)
+    elif choise == '4':
+        ShowTagSummary()
+    elif choise == 'q':
+        break
     else:
         print("Not a valid choise!")
 
-with plot.xkcd():
-    tagSummary = lastDb.getTagSummary()
-    plot.ylabel("Number of artists (From Top 500)")
-    plot.xlabel("Total plays")
-    plot.title("Genre summary (2009-2018)")
-    for idx, tag in enumerate(tagSummary):
-        plot.scatter(tag[3], tag[0])
-        plot.annotate(tag[1], [tag[3], tag[0]], [tag[3]+2, tag[0]+1])
-plot.show()
