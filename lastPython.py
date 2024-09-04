@@ -98,6 +98,7 @@ print("1. Update now playing")
 print("2. Scrobble a track")
 print("3. Scrobble an album")
 print("4. Display tag summary chart")
+print("5. Artists charts")
 while True:
     choise = input("# ")
     if choise == '1':
@@ -114,6 +115,18 @@ while True:
         lastApi.scrobbleAlbum(artist, album)
     elif choise == '4':
         ShowTagSummary()
+    elif choise == '5':
+        topArtists = []
+        print('Top 100 Artists of all time\n')
+        for i in range(1, 3):
+            topArtists += lastApi.topArtists(page = i)
+        for artist in topArtists:
+            print(artist['@attr']['rank'] + '. ' +artist['name']
+                      + '(' + artist['playcount'] + ' listens)')
+        print('\nTop 50 Artists of last week\n')
+        for artist in lastApi.topArtists(period = '7day'):
+            print(artist['@attr']['rank'] + '. ' +artist['name']
+                      + '(' + artist['playcount'] + ' listens)')
     elif choise == 'q':
         break
     else:
