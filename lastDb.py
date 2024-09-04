@@ -29,6 +29,8 @@ class LastDb:
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 name TEXT NOT NULL UNIQUE
                             )"""
+        self.dbCursor.execute(tagTableSql)
+
         artistTagTableSql = """CREATE TABLE IF NOT EXISTS artist_tag(
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 tag_id INTEGER,
@@ -37,8 +39,18 @@ class LastDb:
                                 FOREIGN KEY(tag_id) REFERENCES tag(id),
                                 FOREIGN KEY(artist_id) REFERENCES artist(id)
                             )"""
-
         self.dbCursor.execute(artistTagTableSql)
+
+        trackTableSql = """CREATE TABLE IF NOT EXISTS track(
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                name TEXT NOT NULL UNIQUE,
+                                artist_id INTEGER,
+                                play_count INTEGER,
+                                duration INTEGER,
+                                FOREIGN KEY(artist_id) REFERENCES artist(id)
+                            )"""
+        self.dbCursor.execute(trackTableSql)
+
         self.dbConn.commit()
         #Create unique complex index on artist and tag, so we dont get duplicates
         artistTagIndexSql = """CREATE UNIQUE INDEX IF NOT EXISTS `artist_tag_index` ON `artist_tag` (
@@ -89,6 +101,7 @@ class LastDb:
         except sqlite3.Error as e:
             print ("Error while adding tag: {error}".format(error= e.args[0]))
 
+
     def addTags(self, tags):
         for tag in tags:
             self.addTag(tag)
@@ -100,6 +113,21 @@ class LastDb:
         except sqlite3.Error as e:
             print ("Error while getting artist ID: {error}".format(error= e.args[0]))
 
+    def addTracks(self, tracks):
+        for track in tracks:
+            try:
+                # First get artist_id
+                artistId = self.getArtistId(track['artist']['name'])
+                self.dbCursor.execute("INSERT OR IGNORE INTO track (name, artist_id, play_count, duration) " + \
+                    "VALUES (:name, :artist_id, :play_count, :duration) " + \
+                    "UPDATE track SET play_count=:count WHERE name=:namei;",
+                                      {"name": track['name'], "count": track['playcount'],
+                                       "artist_id": artistId, "duration": track['duration']})
+                self.dbConn.commit()
+            except sqlite3.Error as e:
+                print ("Error while adding artist to db: {error}".format(error= e.args[0]))
+
+    # Get sunmmary of tags with information of total plays, total artist count
     def getTagSummary(self):
         self.dbCursor.execute("SELECT COUNT(a.name) as 'totalArtistCount', " +\
                 "t.name, AVG(a.play_count) as 'avgScrobbles', SUM(a.play_count) as 'totalPlays ' "+\
@@ -108,6 +136,22 @@ class LastDb:
                 "LEFT JOIN tag as t ON t.id = a_t.tag_id " +\
                 "WHERE a_t.count > 20 and t.name != 'rock'" +\
                 # and t.name LIKE '%rock%'
+                # "and t.name NOT LIKE '%lassic rock%'" +\
                 "GROUP BY t.name " +\
                 "ORDER BY COUNT(a.name) DESC")
         return self.dbCursor.fetchall()
+
+    # Instead of standard LastFM top artists with most scrobbles get actual top artists using
+    # time they were listened to
+    # def getTopArtistsByTimeListened(self):
+        # self.dbCursor.execute("SELECT COUNT(a.name) as 'totalArtistCount', " +\
+                # "t.name, AVG(a.play_count) as 'avgScrobbles', SUM(a.play_count) as 'totalPlays ' "+\
+                # "FROM artist as a " +\
+                # "LEFT JOIN artist_tag as a_t ON a_t.artist_id = a.id " +\
+                # "LEFT JOIN tag as t ON t.id = a_t.tag_id " +\
+                # "WHERE a_t.count > 20 and t.name != 'rock'" +\
+                # # and t.name LIKE '%rock%'
+                # # "and t.name NOT LIKE '%lassic rock%'" +\
+                # "GROUP BY t.name " +\
+                # "ORDER BY COUNT(a.name) DESC")
+        # return self.dbCursor.fetchall()

@@ -7,6 +7,23 @@ import matplotlib.pyplot as plot
 
 lastApi = LastApi()
 lastDb = LastDb()
+# TODO: Experiment to approximate top artists based on listening time
+
+# Scan top 5000 tracks and save their information in DB for analysing
+for i in range(1, 100):
+    print(f'Syncing top tracks to db.. {i}% done');
+    tracks = lastApi.topTracks(i)
+    for track in tracks:
+        # print(track['name'] + ' (' + track['artist']['name'] + '): ' + track['playcount'])
+        # Get track duration in ms
+        trackInfo = lastApi.trackInfo(track['artist']['name'], track['name'])
+        track['duration'] = 0
+        if trackInfo:
+            if 'duration' in trackInfo:
+                track['duration'] = int(trackInfo['duration'])
+    lastDb.addTracks(tracks)
+
+# for artist in lastApi.topArtists():
 
 # Ideas:
 # Use weekly artist or album, track charts to see trending tags
@@ -63,6 +80,8 @@ def SyncArtist(artist):
 def ShowTagSummary():
     with plot.xkcd():
         tagSummary = lastDb.getTagSummary()
+        # Set plot size (in inches) and dpi
+        plot.figure(figsize=(19, 12), dpi=plot.rcParams['figure.dpi'])
         plot.ylabel("Number of artists (From Top 500)")
         plot.xlabel("Total plays")
         plot.title("Genre summary (2009-Now)")

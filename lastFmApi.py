@@ -18,6 +18,13 @@ class LastApi:
                 params = {'user': 'kaktusas86', 'period': 'overall', 'page' : page}
                 )['topalbums']['album']
 
+    # Get top tracks for user
+    def topTracks(self, page = None):
+        return self.req.execute("user.getTopTracks",
+                params = {'user': 'kaktusas86', 'period': 'overall', 'page' : page}
+                )['toptracks']['track']
+
+
     # Get top tags for artist
     def artistTags(self, name = None, mbid = None):
         if name:
@@ -45,6 +52,15 @@ class LastApi:
             return self.req.execute("album.getInfo",
                     params = {'user': 'kaktusas86', 'artist': artist, 'album': album}
                     )['album']
+        except KeyError as error:
+            print(error)
+
+    # Get track info with duration and user play count if possible
+    def trackInfo(self, artist, track):
+        try:
+            return self.req.execute("track.getInfo",
+                    params = {'user': 'kaktusas86', 'artist': artist, 'track': track}
+                    )['track']
         except KeyError as error:
             print(error)
 
